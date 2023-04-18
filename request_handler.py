@@ -1,6 +1,5 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
-from http.server import BaseHTTPRequestHandler, HTTPServer
-from views import get_all_animals, get_single_animal, get_all_employees, get_single_employee, get_all_locations, get_single_location, get_single_customer, get_all_customers, create_animal, create_location, create_customer, create_employee
+from views import get_all_animals, get_single_animal, get_all_employees, get_single_employee, get_all_locations, get_single_location, get_single_customer, get_all_customers, create_animal, create_location, create_customer, create_employee, delete_animal, delete_customer, delete_employee, delete_location
 import json
 
 # Here's a class. It inherits from another class.
@@ -145,7 +144,7 @@ class HandleRequests(BaseHTTPRequestHandler):
             new_animal = create_animal(post_body)
 
         # Encode the new animal and send in response
-        self.wfile.write(json.dumps(new_animal).encode())
+            self.wfile.write(json.dumps(new_animal).encode())
         
     
         new_location = None
@@ -157,7 +156,7 @@ class HandleRequests(BaseHTTPRequestHandler):
             new_location = create_location(post_body)
 
         # Encode the new animal and send in response
-        self.wfile.write(json.dumps(new_location).encode())
+            self.wfile.write(json.dumps(new_location).encode())
         
 
         # Initialize new animal
@@ -170,7 +169,7 @@ class HandleRequests(BaseHTTPRequestHandler):
             new_customers = create_customer(post_body)
 
         # Encode the new animal and send in response
-        self.wfile.write(json.dumps(new_customers).encode())
+            self.wfile.write(json.dumps(new_customers).encode())
         
         
         new_employee = None
@@ -182,7 +181,53 @@ class HandleRequests(BaseHTTPRequestHandler):
             new_employee = create_employee(post_body)
 
         # Encode the new animal and send in response
-        self.wfile.write(json.dumps(new_employee).encode())
+            self.wfile.write(json.dumps(new_employee).encode())
+        
+    def do_DELETE(self):
+    # Set a 204 response code
+        self._set_headers(204)
+
+        # Parse the URL
+        (resource, id) = self.parse_url(self.path)
+
+        # Delete a single animal from the list
+        if resource == "animals":
+            delete_animal(id)
+
+        # Encode the new animal and send in response
+            self.wfile.write("".encode())
+            
+        # Parse the URL
+        (resource, id) = self.parse_url(self.path)
+
+        # Delete a single animal from the list
+        if resource == "customer":
+            delete_customer(id)
+
+        # Encode the new animal and send in response
+            self.wfile.write("".encode())
+            
+        # Parse the URL
+        (resource, id) = self.parse_url(self.path)
+
+        # Delete a single animal from the list
+        if resource == "employee":
+            delete_employee(id)
+
+        # Encode the new animal and send in response
+            self.wfile.write("".encode())
+            
+        # Parse the URL
+        (resource, id) = self.parse_url(self.path)
+
+        # Delete a single animal from the list
+        if resource == "location":
+            delete_location(id)
+
+        # Encode the new animal and send in response
+            self.wfile.write("".encode())           
+            
+                                  
 
 
 # This function is not inside the class. It is the starting
