@@ -147,38 +147,18 @@ class HandleRequests(BaseHTTPRequestHandler):
         # Encode the new animal and send in response
         self.wfile.write(json.dumps(new_animal).encode())
         
-        # self._set_headers(201)
-        # content_len = int(self.headers.get('content-length', 0))
-        # post_body = self.rfile.read(content_len)
+    
+        new_location = None
 
-        # # Convert JSON string to a Python dictionary
-        # post_body = json.loads(post_body)
+        # Add a new animal to the list. Don't worry about
+        # the orange squiggle, you'll define the create_animal
+        # function next.
+        if resource == "locations":
+            new_location = create_location(post_body)
 
-        # # Parse the URL
-        # (resource, id) = self.parse_url(self.path)
-
-        # # Initialize new animal
-        # new_location = None
-
-        # # Add a new animal to the list. Don't worry about
-        # # the orange squiggle, you'll define the create_animal
-        # # function next.
-        # if resource == "locations":
-        #     new_location = create_location(post_body)
-
-        # # Encode the new animal and send in response
-        # self.wfile.write(json.dumps(new_location).encode())
+        # Encode the new animal and send in response
+        self.wfile.write(json.dumps(new_location).encode())
         
-        
-        self._set_headers(201)
-        content_len = int(self.headers.get('content-length', 0))
-        post_body = self.rfile.read(content_len)
-
-        # Convert JSON string to a Python dictionary
-        post_body = json.loads(post_body)
-
-        # Parse the URL
-        (resource, id) = self.parse_url(self.path)
 
         # Initialize new animal
         new_customers = None
@@ -193,27 +173,16 @@ class HandleRequests(BaseHTTPRequestHandler):
         self.wfile.write(json.dumps(new_customers).encode())
         
         
-        # self._set_headers(201)
-        # content_len = int(self.headers.get('content-length', 0))
-        # post_body = self.rfile.read(content_len)
+        new_employee = None
 
-        # # Convert JSON string to a Python dictionary
-        # post_body = json.loads(post_body)
+        # Add a new animal to the list. Don't worry about
+        # the orange squiggle, you'll define the create_animal
+        # function next.
+        if resource == "employees":
+            new_employee = create_employee(post_body)
 
-        # # Parse the URL
-        # (resource, id) = self.parse_url(self.path)
-
-        # # Initialize new animal
-        # new_employee = None
-
-        # # Add a new animal to the list. Don't worry about
-        # # the orange squiggle, you'll define the create_animal
-        # # function next.
-        # if resource == "employees":
-        #     new_employee = create_employee(post_body)
-
-        # # Encode the new animal and send in response
-        # self.wfile.write(json.dumps(new_employee).encode())
+        # Encode the new animal and send in response
+        self.wfile.write(json.dumps(new_employee).encode())
 
 
 # This function is not inside the class. It is the starting
