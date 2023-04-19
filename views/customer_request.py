@@ -52,3 +52,12 @@ def delete_customer(id):
     # If the animal was found, use pop(int) to remove it from list
     if customer_index >= 0:
         CUSTOMERS.pop(customer_index)
+        
+def update_customer(id, new_customer):
+    # Iterate the ANIMALS list, but use enumerate() so that
+    # you can access the index value of each item.
+    for index, customer in enumerate(CUSTOMERS):
+        if customer["id"] == id:
+            # Found the animal. Update the value.
+            CUSTOMERS[index] = new_customer
+            break
