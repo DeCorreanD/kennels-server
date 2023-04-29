@@ -1,3 +1,7 @@
+import sqlite3
+import json
+from models import Location, Animal, Employee
+
 LOCATIONS = [
     {
         "id": 1,
@@ -13,19 +17,85 @@ LOCATIONS = [
 
 
 def get_all_locations():
-    return LOCATIONS
-  
-def get_single_location(id):
     
-    requested_location = None
-    
-    
-    for location in LOCATIONS:
-      
-        if location["id"] == id:
-            requested_location = location
+    with sqlite3.connect("./kennel.sqlite3") as conn:
+
+        # Just use these. It's a Black Box.
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
+
+        # Write the SQL query to get the information you want
+        db_cursor.execute("""
+        SELECT
+            l.id,
+            l.name,
+            l.address,
+            e.name employee_name,
+            e.address employee_address,
+            e.location_id employee_location_id,
+            a.name animal_name,
+            a.breed animal_breed,
+            a.status animal_status,
+            a.location_id animal_location_id,
+            a.customer_id animal_customer_id
+        FROM Location l
+        JOIN Employee e
+            ON l.id = e.location_id
+        JOIN Animal a
+            ON l.id = a.location_id
+        """)
+
+        # Initialize an empty list to hold all animal representations
+        locations = []
+
+        # Convert rows of data into a Python list
+        dataset = db_cursor.fetchall()
+
+        # Iterate list of data returned from database
+        for row in dataset:
+
+            # Create an animal instance from the current row.
+            # Note that the database fields are specified in
+            # exact order of the parameters defined in the
+            # Animal class above.
+            location = Location(row['id'], row['name'],
+                                row['address'])
             
-    return requested_location
+            employee = Employee(row['employee_name'], row['employee_address'], row['employee_location_id'])
+            
+            animal = Animal(row['animal_name'], row['animal_breed'], row['animal_status'], row['animal_location_id'], row['animal_customer_id'])
+           
+            location.employee = employee.__dict__
+            
+            location.animal = animal.__dict__
+            
+            locations.append(location.__dict__) # see the notes below for an explanation on this line of code.
+
+    return locations
+
+def get_single_location(id):
+    with sqlite3.connect("./kennel.sqlite3") as conn:
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
+
+        # Use a ? parameter to inject a variable's value
+        # into the SQL statement.
+        db_cursor.execute("""
+        SELECT
+            l.id,
+            l.name,
+            l.address
+        FROM location l
+        WHERE l.id = ?
+        """, ( id, ))
+
+        # Load the single result into memory
+        data = db_cursor.fetchone()
+
+        # Create an animal instance from the current row
+        location = Location(data['id'], data['name'], data['address'])
+
+        return location.__dict__
 
 
 def create_location(location):
