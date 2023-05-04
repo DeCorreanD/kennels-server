@@ -258,3 +258,69 @@ def get_animal_status(status):
             animals.append(animal.__dict__)
 
     return animals
+
+def search_animals(term):
+    """let's see whats going on
+    """
+    # Open a connection to the database
+    with sqlite3.connect("./kennel.sqlite3") as conn:
+        
+        search_query = f"%{term}%"
+        
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
+        
+        
+        db_cursor.execute("""
+        SELECT
+            a.id,
+            a.name,
+            a.breed,
+            a.status,
+            a.location_id,
+            a.customer_id,
+            l.id,
+            l.name location_name,
+            l.address location_address,
+            c.id,
+            c.name customer_name,
+            c.address customer_address,
+            c.email customer_email
+        FROM Animal a
+        JOIN Location l
+            ON l.id = a.location_id
+        JOIN Customer c
+            ON c.id = a.customer_id
+            WHERE a.name LIKE ? OR a.breed LIKE ?
+        """, (search_query, search_query))
+        
+        animals = []
+        
+        dataset = db_cursor.fetchall()
+        
+        for row in dataset:
+        
+            
+            animal = Animal(row['id'],
+                            row['name'],
+                            row['breed'],
+                            row['status'],
+                            row['location_id'],
+                            row['customer_id'],)
+
+            location = Location(row['id'],
+                                row['location_name'],
+                                row['location_address'],)
+            
+           
+            customer = Customer(row['id'],
+                                row['customer_name'],
+                                row['customer_address'],
+                                row['customer_email'])
+            
+            animal.location = location.__dict__
+            animal.customer = customer.__dict__
+            
+            animals.append(animal.__dict__)
+            
+    return animals
