@@ -1,5 +1,5 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
-from views import get_all_animals, get_single_animal, get_all_employees, get_single_employee, get_all_locations, get_single_location, get_single_customer, get_all_customers, create_animal, create_location, create_customer, create_employee, delete_animal, delete_customer, delete_employee, delete_location, update_animal, update_customer, update_employee, update_location, get_customer_by_email, get_animal_location, get_employee_location, get_animal_status
+from views import get_all_animals, get_single_animal, get_all_employees, get_single_employee, get_all_locations, get_single_location, get_single_customer, get_all_customers, create_animal, create_location, create_customer, create_employee, delete_animal, delete_customer, delete_employee, delete_location, update_animal, update_customer, update_employee, update_location, get_customer_by_email, get_animal_location, get_employee_location, get_animal_status, search_animals
 import json
 from urllib.parse import urlparse, parse_qs
 
@@ -103,7 +103,8 @@ class HandleRequests(BaseHTTPRequestHandler):
                 response = get_employee_location(query['location_id'][0])
             if query.get('status') and resource == 'animals':
                 response = get_animal_status(query['status'][0])    
-            
+            if query.get('search') and resource == 'animals':
+                response = search_animals(query['search'][0])
             
 
         self.wfile.write(json.dumps(response).encode())

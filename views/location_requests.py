@@ -30,9 +30,11 @@ def get_all_locations():
             l.id,
             l.name,
             l.address,
+            e.id employee_id,
             e.name employee_name,
             e.address employee_address,
             e.location_id employee_location_id,
+            a.id animal_id,
             a.name animal_name,
             a.breed animal_breed,
             a.status animal_status,
@@ -61,9 +63,10 @@ def get_all_locations():
             location = Location(row['id'], row['name'],
                                 row['address'])
             
-            employee = Employee(row['employee_name'], row['employee_address'], row['employee_location_id'])
+            employee = Employee(row['employee_id'],row['employee_name'], row['employee_address'], row['employee_location_id'])
             
-            animal = Animal(row['animal_name'], row['animal_breed'], row['animal_status'], row['animal_location_id'], row['animal_customer_id'])
+            animal = Animal(row['animal_id'], row['animal_name'], row['animal_breed'],
+                            row['animal_status'], row['animal_location_id'], row['animal_customer_id'])
            
             location.employee = employee.__dict__
             
@@ -84,16 +87,52 @@ def get_single_location(id):
         SELECT
             l.id,
             l.name,
-            l.address
-        FROM location l
-        WHERE l.id = ?
-        """, ( id, ))
+            l.address,
+            e.id employee_id,
+            e.name employee_name,
+            e.address employee_address,
+            e.location_id employee_location_id,
+            a.id animal_id,
+            a.name animal_name,
+            a.breed animal_breed,
+            a.status animal_status,
+            a.location_id animal_location_id,
+            a.customer_id animal_customer_id
+        FROM Location l
+        JOIN Employee e
+            ON l.id = e.location_id
+        JOIN Animal a
+            ON l.id = a.location_id
+        """)
 
-        # Load the single result into memory
-        data = db_cursor.fetchone()
+        # Initialize an empty list to hold all animal representations
+        locations = []
 
-        # Create an animal instance from the current row
-        location = Location(data['id'], data['name'], data['address'])
+        # Convert rows of data into a Python list
+        dataset = db_cursor.fetchall()
+
+        # Iterate list of data returned from database
+        for data in dataset:
+
+            # Create an animal instance from the current row.
+            # Note that the database fields are specified in
+            # exact order of the parameters defined in the
+            # Animal class above.
+            location = Location(data['id'], data['name'],
+                                data['address'])
+
+            employee = Employee(data['employee_id'],
+                data['employee_name'], data['employee_address'], data['employee_location_id'])
+
+            animal = Animal(data['animal_id'], data['animal_name'], data['animal_breed'], data['animal_status'],
+                            data['animal_location_id'], data['animal_customer_id'])
+
+            location.employee = employee.__dict__
+
+            location.animal = animal.__dict__
+
+            # see the notes below for an explanation on this line of code.
+            locations.append(location.__dict__)
 
         return location.__dict__
 
